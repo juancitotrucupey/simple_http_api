@@ -24,6 +24,17 @@ class VisitResponse(BaseModel):
     message: str = Field(..., description="Response message")
 
 
+class StatsRequest(BaseModel):
+    """Model for statistics request parameters."""
+
+    timeframe_hours: float = Field(
+        default=1.0,
+        ge=0.1,
+        le=168.0,  # Maximum 1 week
+        description="Timeframe in hours for recent visits (default: 1 hour, max: 168 hours/1 week)",
+    )
+
+
 class StatsResponse(BaseModel):
     """Model for statistics response."""
 
@@ -32,4 +43,5 @@ class StatsResponse(BaseModel):
     total_visits: int = Field(..., description="Total number of visits logged")
     current_time: datetime = Field(..., description="Current server time")
     server_status: str = Field(..., description="Server status")
-    recent_visits: int = Field(..., description="Number of visits in the last hour")
+    recent_visits: int = Field(..., description="Number of visits in the specified timeframe")
+    timeframe_hours: float = Field(..., description="Timeframe used for recent visits calculation")

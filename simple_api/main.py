@@ -3,11 +3,11 @@
 import time
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from simple_api.database import MockedDB
-from simple_api.models import StatsResponse, VisitRequest, VisitResponse
+from simple_api.models import StatsRequest, StatsResponse, VisitRequest, VisitResponse
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -23,6 +23,14 @@ db = MockedDB()
 
 # Track server start time for uptime calculation
 SERVER_START_TIME = time.time()
+
+
+def get_stats_request(timeframe_hours: float = 1.0) -> StatsRequest:
+    """Dependency to create StatsRequest from query parameters with validation."""
+    try:
+        return StatsRequest(timeframe_hours=timeframe_hours)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
 
 
 def format_uptime(uptime_seconds: float) -> str:
@@ -57,7 +65,7 @@ async def root():
 
 
 @app.post("/visit", response_model=VisitResponse, summary="Log a user visit")
-async def log_visit(visit_data: VisitRequest, request: Request):
+async def log_visit(visit_data: VisitRequest, request: Request) -> VisitResponse:
     """
     Log a user visit to the website.
 
@@ -89,12 +97,15 @@ async def log_visit(visit_data: VisitRequest, request: Request):
 
 
 @app.get("/stats", response_model=StatsResponse, summary="Get server statistics")
-async def get_stats():
+async def get_stats(stats_request: StatsRequest = Depends(get_stats_request)) -> StatsResponse:  # noqa: B008
     """
     Get comprehensive server statistics.
 
     Returns information about server uptime, total visits, current time,
     and other relevant metrics for monitoring the traffic tracker service.
+
+    Args:
+        stats_request: Request parameters including timeframe for recent visits calculation
 
     Returns:
         StatsResponse: Complete server statistics
@@ -105,7 +116,7 @@ async def get_stats():
 
         # Get visit statistics from database
         total_visits = db.get_total_visits()
-        recent_visits = db.get_recent_visits(hours=1)
+        recent_visits = db.get_recent_visits(hours=stats_request.timeframe_hours)
 
         return StatsResponse(
             uptime_seconds=uptime_seconds,
@@ -114,6 +125,7 @@ async def get_stats():
             current_time=datetime.now(),
             server_status="running",
             recent_visits=recent_visits,
+            timeframe_hours=stats_request.timeframe_hours,
         )
 
     except Exception as e:
@@ -121,7 +133,7 @@ async def get_stats():
 
 
 @app.get("/health", summary="Health check endpoint")
-async def health_check():
+async def health_check() -> dict[str, str | float]:
     """Simple health check endpoint."""
     return {
         "status": "healthy",
@@ -132,7 +144,7 @@ async def health_check():
 
 # Exception handlers
 @app.exception_handler(404)
-async def not_found_handler(request: Request, exc: Exception):
+async def not_found_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handle 404 errors with custom response."""
     return JSONResponse(
         status_code=404,

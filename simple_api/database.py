@@ -61,12 +61,12 @@ class MockedDB:
         """Get the total number of visits."""
         return self.visit_count.value
 
-    def get_recent_visits(self, hours: int = 1) -> int:
+    def get_recent_visits(self, hours: float = 1.0) -> int:
         """
         Get the number of visits within the specified number of hours.
 
         Args:
-            hours: Number of hours to look back (default: 1)
+            hours: Number of hours to look back (default: 1.0)
 
         Returns:
             int: Number of recent visits
