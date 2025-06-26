@@ -134,9 +134,14 @@ The `run.py` script supports the following options:
 - `--help`: Show help message with examples
 
 **Important Notes:**
-- When `--dev` is used, the number of workers is automatically set to 1 for uvicorn compatibility with reload
+- When `--dev` is used without specifying `--n-workers`, it automatically defaults to 1 worker
+- If you explicitly specify `--n-workers` with `--dev`, it must be set to 1 (validation will raise an error otherwise)
 - Development mode (`--dev`) makes the server reload automatically when code changes are detected
 - Production deployments should avoid using `--dev` flag for better performance
+
+**Validation Rules:**
+- `--dev` mode requires exactly 1 worker due to reload mechanism incompatibility with multiple processes
+- The system will raise a `ValueError` with detailed instructions if you try to use `--dev` with `--n-workers > 1`
 
 The API will be available at: **http://localhost:8080**
 
