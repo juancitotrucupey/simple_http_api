@@ -104,6 +104,12 @@ curl -X POST http://localhost:8080/visit \
 #### 2. **GET /stats** - Get server statistics
 Returns comprehensive server statistics including uptime and visit counts.
 
+**Query Parameters:**
+- `timeframe_hours` (optional): Timeframe in hours for recent visits calculation
+  - Default: `1.0` (1 hour)
+  - Minimum: `0.1` (6 minutes) 
+  - Maximum: `168.0` (1 week)
+
 **Response:**
 ```json
 {
@@ -112,13 +118,21 @@ Returns comprehensive server statistics including uptime and visit counts.
   "total_visits": 42,
   "current_time": "2023-12-07T10:30:00.123456",
   "server_status": "running",
-  "recent_visits": 10
+  "recent_visits": 10,
+  "timeframe_hours": 1.0
 }
 ```
 
-**Example curl command:**
+**Example curl commands:**
 ```bash
+# Default stats (1 hour timeframe for recent visits)
 curl http://localhost:8080/stats
+
+# Custom timeframe (30 minutes for recent visits)
+curl "http://localhost:8080/stats?timeframe_hours=0.5"
+
+# Weekly stats (7 days for recent visits)  
+curl "http://localhost:8080/stats?timeframe_hours=168.0"
 ```
 
 #### 3. **GET /health** - Health check
@@ -145,7 +159,11 @@ curl http://localhost:8080/health
 
 3. **Check statistics:**
    ```bash
+   # Default stats (1 hour recent visits)
    curl http://localhost:8080/stats
+   
+   # Custom timeframe stats (30 minutes recent visits)
+   curl "http://localhost:8080/stats?timeframe_hours=0.5"
    ```
 
 ### Architecture Notes
@@ -153,4 +171,6 @@ curl http://localhost:8080/health
 - **Thread Safety:** Uses multiprocessing.Manager with locks to prevent race conditions
 - **MockedDB:** Simulates an external database using shared memory objects
 - **FastAPI:** Provides automatic API documentation and request validation
-- **Pydantic:** Ensures type safety for request/response models 
+- **Pydantic:** Ensures type safety for request/response models
+- **StatsRequest Model:** Uses Pydantic model validation for query parameters via dependency injection
+- **Parameter Validation:** Automatically validates timeframe_hours range (0.1-168.0) with detailed error messages 
