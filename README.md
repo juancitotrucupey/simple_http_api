@@ -52,15 +52,91 @@ make format
 
 ### Starting the Server
 
-1. **Using the run script (Recommended):**
-   ```bash
-   poetry run python -m simple_api.run
-   ```
+The Traffic Tracker API can be started in multiple ways, depending on your needs:
 
-2. **Using uvicorn directly:**
-   ```bash
-   poetry run uvicorn simple_api.main:app --host 0.0.0.0 --port 8080 --reload
-   ```
+#### 1. **Using the run script (Recommended)**
+
+**Default mode (4 workers, no reload):**
+```bash
+poetry run python -m simple_api.run
+# OR using make
+make run
+```
+
+**Development mode (with auto-reload):**
+```bash
+poetry run python -m simple_api.run --dev
+# OR using make
+make run-dev
+```
+
+**Custom number of workers:**
+```bash
+# 8 workers, no reload
+poetry run python -m simple_api.run --n-workers 8
+
+# 2 workers with development mode
+poetry run python -m simple_api.run --n-workers 2 --dev
+
+# Using make with custom arguments
+make run ARGS="--n-workers 8 --dev"
+```
+
+#### 2. **Using FastAPI CLI**
+
+**Default FastAPI CLI (4 workers, no reload):**
+```bash
+poetry run python -m simple_api.run --fastapi-cli
+# OR using make
+make run-fastapi
+```
+
+**FastAPI CLI with development mode:**
+```bash
+poetry run python -m simple_api.run --fastapi-cli --dev
+# OR using make
+make run-fastapi-dev
+```
+
+**FastAPI CLI with custom workers:**
+```bash
+# 8 workers, no reload
+poetry run python -m simple_api.run --fastapi-cli --n-workers 8
+
+# Custom workers with development mode
+poetry run python -m simple_api.run --fastapi-cli --n-workers 2 --dev
+
+# Using make with custom arguments
+make run-fastapi ARGS="--n-workers 8"
+```
+
+**Direct FastAPI CLI (without run script):**
+```bash
+# Production mode
+poetry run fastapi run --workers 4 --port 8080 simple_api/main.py
+
+# Development mode with reload
+poetry run fastapi run --workers 4 --port 8080 --reload simple_api/main.py
+```
+
+#### 3. **Using uvicorn directly:**
+```bash
+poetry run uvicorn simple_api.main:app --host 0.0.0.0 --port 8080 --reload
+```
+
+### Command Line Options
+
+The `run.py` script supports the following options:
+
+- `--n-workers N`: Number of worker processes (default: 4)
+- `--dev`: Enable development mode with automatic reload on code changes
+- `--fastapi-cli`: Use FastAPI CLI instead of uvicorn directly
+- `--help`: Show help message with examples
+
+**Important Notes:**
+- When `--dev` is used, the number of workers is automatically set to 1 for uvicorn compatibility with reload
+- Development mode (`--dev`) makes the server reload automatically when code changes are detected
+- Production deployments should avoid using `--dev` flag for better performance
 
 The API will be available at: **http://localhost:8080**
 
