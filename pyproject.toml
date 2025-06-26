@@ -10,6 +10,7 @@ packages = [{include = "simple_api"}]
 python = ">=3.10,<=3.12"
 fastapi = "0.115.10"
 pydantic = "^2.5.0"
+uvicorn = "^0.32.0"
 ruff = { version = "^0.11.0", optional = true}
 
 [tool.poetry.extras]
