@@ -18,4 +18,7 @@ format: ## Format code using ruff
 
 check: ## Check code formatting and linting without fixing
 	poetry run ruff format --check .
-	poetry run ruff check . 
+	poetry run ruff check .
+
+run: ## Start the HTTP API server on port 8080
+	poetry run python -m simple_api.run 
