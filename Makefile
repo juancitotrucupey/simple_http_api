@@ -8,7 +8,7 @@ install: ## Install dependencies using Poetry
 	poetry lock
 	poetry install --no-root
 
-dev_install: ## Install dependencies using Poetry
+dev_install: ## Install dependencies using Poetry including dev dependencies
 	poetry lock
 	poetry install --no-root --extras dev
 
