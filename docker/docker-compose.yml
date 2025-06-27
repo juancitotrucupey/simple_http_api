@@ -1,17 +1,21 @@
-version: '3.8'
-
 services:
   simple-api:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+      platforms:
+        - linux/amd64  # AMD64 for deployment compatibility
+        - linux/arm64  # ARM64 for Apple Silicon compatibility and local development
+    image: simple-http-api:latest
     container_name: simple-http-api
     ports:
       - "8080:8080"
     deploy:
       resources:
-        limits:
+        reservations:
           cpus: '1.0'
+        limits:
+          cpus: '3.0'
     environment:
       - PYTHONUNBUFFERED=1
     healthcheck:
