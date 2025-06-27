@@ -275,8 +275,6 @@ locust --host=http://localhost:8080 --users 10 --spawn-rate 2 --run-time 60s --h
 locust --host=http://localhost:8080 --users 100 --spawn-rate 10 --run-time 300s --headless
 ```
 
-See [README-TESTING.md](README-TESTING.md) and [TESTING.md](TESTING.md) for comprehensive testing documentation.
-
 ### Architecture Notes
 
 - **Thread Safety:** Uses multiprocessing.Manager with locks to prevent race conditions during high-traffic promotion periods
