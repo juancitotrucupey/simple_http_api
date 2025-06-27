@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
-RUN pip install poetry==1.8.3
+RUN pip install poetry==1.8.0
 
 # Configure Poetry: Don't create virtual environment, install to system Python
 ENV POETRY_NO_INTERACTION=1 \
