@@ -1,6 +1,6 @@
-# Traffic Tracker
+# E-commerce Promotion API
 
-Basic example of a traffic tracker for a website.
+API for tracking user visits during e-commerce promotion campaigns. This system tracks customer interactions and displays visitor counts as part of publicity efforts to encourage more participation in promotional events.
 
 ## Installation
 
@@ -152,14 +152,14 @@ The API will be available at: **http://localhost:8080**
 
 ### API Endpoints
 
-#### 1. **POST /visit** - Log a user visit
-Logs a user visit and increments the visit counter.
+#### 1. **POST /visit** - Log a customer visit to promotion
+Logs when a customer visits the promotion pages and returns the total visitor count for publicity display.
 
 **Request Body:**
 ```json
 {
-  "user_id": "unique_user_id",
-  "page_url": "https://example.com/page",
+  "user_id": "unique_customer_id",
+  "page_url": "https://ecommerce.com/promotion",
   "user_agent": "Mozilla/5.0...",
   "ip_address": "192.168.1.1",
   "referrer": "https://google.com"
@@ -170,8 +170,8 @@ Logs a user visit and increments the visit counter.
 ```json
 {
   "success": true,
-  "visit_count": 42,
-  "message": "Visit logged successfully. Total visits: 42"
+  "visit_count": 1247,
+  "message": "Visit logged successfully. Total visits: 1247"
 }
 ```
 
@@ -179,11 +179,11 @@ Logs a user visit and increments the visit counter.
 ```bash
 curl -X POST http://localhost:8080/visit \
   -H "Content-Type: application/json" \
-  -d '{"user_id": "user123", "page_url": "https://example.com/home"}'
+  -d '{"user_id": "customer123", "page_url": "https://ecommerce.com/promotion"}'
 ```
 
-#### 2. **GET /stats** - Get server statistics
-Returns comprehensive server statistics including uptime and visit counts.
+#### 2. **GET /stats** - Get promotion campaign statistics  
+Returns comprehensive statistics about the promotion campaign including visitor metrics and campaign performance.
 
 **Query Parameters:**
 - `timeframe_hours` (optional): Timeframe in hours for recent visits calculation
@@ -226,32 +226,62 @@ curl http://localhost:8080/health
 
 ### Testing the API
 
+#### Manual Testing
+
 1. **Start the server:**
    ```bash
    poetry run python -m simple_api.run
    ```
 
-2. **Test logging a visit:**
+2. **Test logging a promotion visit:**
    ```bash
    curl -X POST http://localhost:8080/visit \
      -H "Content-Type: application/json" \
-     -d '{"user_id": "test_user", "page_url": "https://example.com/test"}'
+     -d '{"user_id": "test_customer", "page_url": "https://ecommerce.com/promotion"}'
    ```
 
-3. **Check statistics:**
+3. **Check promotion statistics:**
    ```bash
-   # Default stats (1 hour recent visits)
+   # Default campaign stats (1 hour recent visitors)
    curl http://localhost:8080/stats
    
-   # Custom timeframe stats (30 minutes recent visits)
+   # Custom timeframe stats (30 minutes recent visitors)
    curl "http://localhost:8080/stats?timeframe_hours=0.5"
    ```
 
+#### Performance Testing
+
+Load test the API with Locust:
+
+```bash
+# Install testing dependencies
+pip install -r requirements.txt
+
+# Start the API
+make run
+
+# Run load tests (separate terminal)
+locust --host=http://localhost:8080
+```
+
+Then open http://localhost:8089 for the Locust web interface.
+
+**Quick load tests:**
+```bash
+# Light load (10 users, 60 seconds)
+locust --host=http://localhost:8080 --users 10 --spawn-rate 2 --run-time 60s --headless
+
+# Heavy load (100 users, 5 minutes)  
+locust --host=http://localhost:8080 --users 100 --spawn-rate 10 --run-time 300s --headless
+```
+
+See [README-TESTING.md](README-TESTING.md) and [TESTING.md](TESTING.md) for comprehensive testing documentation.
+
 ### Architecture Notes
 
-- **Thread Safety:** Uses multiprocessing.Manager with locks to prevent race conditions
-- **MockedDB:** Simulates an external database using shared memory objects
-- **FastAPI:** Provides automatic API documentation and request validation
-- **Pydantic:** Ensures type safety for request/response models
-- **StatsRequest Model:** Uses Pydantic model validation for query parameters via dependency injection
-- **Parameter Validation:** Automatically validates timeframe_hours range (0.1-168.0) with detailed error messages 
+- **Thread Safety:** Uses multiprocessing.Manager with locks to prevent race conditions during high-traffic promotion periods
+- **MockedDB:** Simulates customer visit tracking database using shared memory objects
+- **FastAPI:** Provides automatic API documentation and request validation for e-commerce integration
+- **Pydantic:** Ensures type safety for customer visit data and promotion statistics
+- **Campaign Analytics:** Real-time visitor counting and statistics for promotion publicity campaigns
+- **Parameter Validation:** Automatically validates timeframe_hours range (0.1-168.0) for campaign reporting periods 
