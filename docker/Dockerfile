@@ -25,14 +25,14 @@ ENV POETRY_NO_INTERACTION=1 \
 WORKDIR /app
 
 # Copy Poetry configuration files
-COPY ../pyproject.toml ../poetry.lock ./
+COPY pyproject.toml poetry.lock ./
 
 # Install dependencies
 RUN poetry install --only=main --no-root && rm -rf $POETRY_CACHE_DIR
 
 # Copy application code and build files
-COPY ../simple_api ./simple_api
-COPY ../Makefile ./
+COPY simple_api ./simple_api
+COPY Makefile ./
 
 # Run the application using make and using a single worker to ensure the proper usage of the mocked DB
 CMD ["sh", "-c", "make run ARGS='--n-workers 1'"] 
