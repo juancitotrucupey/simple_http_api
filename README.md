@@ -345,6 +345,8 @@ curl http://localhost:8080/health
 
 ### Manual Testing
 
+#### Manual Testing
+
 1. **Start the server:**
    ```bash
    make run
