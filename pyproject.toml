@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "traffic_tracker"
+name = "purchase_tracker"
 version = "0.1.0"
-description = "Basic example of a traffic tracker for a website"
+description = "Basic example of a purchase tracker for a website"
 authors = ["trucupey <jsflorezj@gmail.com>"]
 readme = "README.md"
 packages = [{include = "simple_api"}]
