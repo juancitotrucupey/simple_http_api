@@ -145,7 +145,7 @@ CREATE TABLE purchases (
     user_id INTEGER NOT NULL,
     promotion_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
-    product_amount DECIMAL(10,2) NOT NULL,
+    product_quantity INTEGER NOT NULL CHECK (product_quantity > 0),
     ip_address INET,
     timestamp TIMESTAMPTZ DEFAULT NOW(),
     created_at TIMESTAMPTZ DEFAULT NOW()

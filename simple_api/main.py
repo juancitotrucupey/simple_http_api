@@ -1,4 +1,4 @@
-"""Main FastAPI application for traffic tracking."""
+"""Main FastAPI application for tracking purchases in an e-commerce website."""
 
 import time
 from datetime import datetime
@@ -12,8 +12,8 @@ from simple_api.utils import extract_client_ip, format_uptime, get_stats_request
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Traffic Tracker API",
-    description="Basic example of a traffic tracker for a website",
+    title="Purchase Tracker API",
+    description="Basic example of a purchase tracker for an e-commerce website",
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -43,10 +43,10 @@ async def root():
 @app.post("/buy", response_model=BuyResponse, summary="Log a user buy")
 async def log_buy(buy_data: BuyRequest, request: Request) -> BuyResponse:
     """
-    Log a user buy to the website.
+    Log a user purchase to the website.
 
-    This endpoint accepts user buy information, stores it in the database,
-    and returns the updated buy count. The operation is thread-safe using
+    This endpoint accepts user purchase information, stores it in the database,
+    and returns the updated purchase count. The operation is thread-safe using
     multiprocessing locks to prevent race conditions.
 
     Automatically extracts and enriches request data with:
@@ -54,7 +54,7 @@ async def log_buy(buy_data: BuyRequest, request: Request) -> BuyResponse:
     - Request generation/timing information from headers
 
     Args:
-        buy_data: Buy information including user_id, promotion_id, product_id, product_amount
+        buy_data: Buy information including user_id, promotion_id, product_id, product_quantity
         request: FastAPI request object for extracting client info
 
     Returns:
@@ -70,7 +70,7 @@ async def log_buy(buy_data: BuyRequest, request: Request) -> BuyResponse:
         "user_id": buy_data.user_id,
         "promotion_id": buy_data.promotion_id,
         "product_id": buy_data.product_id,
-        "product_amount": buy_data.product_amount,
+        "product_quantity": buy_data.product_quantity,
         "ip_address": client_ip,
         "timestamp": request_generation_time,
     }
@@ -111,7 +111,7 @@ async def get_stats(stats_request: StatsRequest = Depends(get_stats_request)) ->
             uptime_seconds=uptime_seconds,
             uptime_formatted=format_uptime(uptime_seconds),
             total_buys=total_buys,
-            current_time=current_time,
+            current_time=current_time.isoformat(),
             server_status="healthy",
             n_recent_buys=n_recent_buys,
             timeframe_hours=stats_request.timeframe_hours,

@@ -188,7 +188,7 @@ The API will be available at: **http://localhost:8080**
   "user_id": 12345,
   "promotion_id": 67890,
   "product_id": 11111, 
-  "product_amount": 99.99
+  "product_quantity": 5
 }
 ```
 
@@ -196,7 +196,7 @@ The API will be available at: **http://localhost:8080**
 - `user_id` (int): Unique identifier for the customer
 - `promotion_id` (int): Unique identifier for the promotion campaign  
 - `product_id` (int): Unique identifier for the purchased product
-- `product_amount` (float): Purchase amount in currency units
+- `product_quantity` (int): Quantity of products purchased (must be positive)
 
 **Response:**
 ```json
@@ -233,7 +233,7 @@ curl -X POST http://localhost:8080/buy \
     "user_id": 12345,
     "promotion_id": 67890,
     "product_id": 11111,
-    "product_amount": 99.99
+    "product_quantity": 5
   }'
 ```
 
@@ -246,7 +246,7 @@ curl -X POST http://localhost:8080/buy \
     "user_id": 12345,
     "promotion_id": 67890,
     "product_id": 11111,
-    "product_amount": 99.99
+    "product_quantity": 5
   }'
 ```
 
@@ -259,7 +259,7 @@ curl -X POST http://localhost:8080/buy \
     "user_id": 12345,
     "promotion_id": 67890, 
     "product_id": 11111,
-    "product_amount": 99.99
+    "product_quantity": 5
   }'
 ```
 
@@ -372,7 +372,7 @@ curl http://localhost:8080/health
        "user_id": 12345,
        "promotion_id": 67890,
        "product_id": 11111,
-       "product_amount": 99.99
+       "product_quantity": 5
      }'
    ```
 
@@ -457,7 +457,7 @@ This comprehensive report includes:
     "user_id": int,          # Customer identifier
     "promotion_id": int,     # Promotion campaign ID  
     "product_id": int,       # Product identifier
-    "product_amount": float  # Purchase amount
+    "product_quantity": int  # Quantity of products purchased
 }
 ```
 
@@ -467,7 +467,7 @@ This comprehensive report includes:
     "user_id": int,
     "promotion_id": int,
     "product_id": int, 
-    "product_amount": float,
+    "product_quantity": int,
     "ip_address": str,       # Extracted client IP
     "timestamp": datetime    # Request generation time
 }
