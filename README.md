@@ -411,6 +411,20 @@ locust --host=http://localhost:8080 --users 100 --spawn-rate 10 --run-time 300s 
 locust --host=http://localhost:8080 --users 500 --spawn-rate 25 --run-time 600s --headless
 ```
 
+#### 📊 Comprehensive Performance Analysis
+
+For detailed performance analysis results including throughput metrics, response time characteristics, and breaking point analysis, see:
+
+**[📋 Performance Analysis Report](performance_analysis/performance_analysis_report.md)**
+
+This comprehensive report includes:
+- **Performance characteristics** at different load levels (5-300 concurrent users)
+- **Degradation points** and breaking point analysis  
+- **Throughput analysis** and scaling factors
+- **Production deployment recommendations**
+- **Monitoring strategy** and SLA guidelines
+- **Detailed test results** with HTML reports for each load scenario
+
 ## 🏗️ Architecture & Features
 
 ### Core Features
