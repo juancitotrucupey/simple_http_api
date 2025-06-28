@@ -36,20 +36,23 @@ def test_api_connectivity(host="http://localhost:8080"):
         return False
     
     try:
-        # Test visit endpoint
-        test_visit = {
-            "user_id": "test_user",
-            "page_url": "https://example.com/test",
-            "user_agent": "TestAgent/1.0"
+        # Test buy endpoint
+        test_purchase = {
+            "user_id": 99999,
+            "promotion_id": 1,
+            "product_id": 999,
+            "product_amount": 29.99
         }
-        response = requests.post(f"{host}/visit", json=test_visit, timeout=5)
+        response = requests.post(f"{host}/buy", json=test_purchase, timeout=5)
         if response.status_code == 200:
-            print("✅ Visit endpoint working")
+            print("✅ Buy endpoint working")
+            data = response.json()
+            print(f"   Purchase logged successfully, Total buys: {data.get('buy_count', 'unknown')}")
         else:
-            print(f"❌ Visit endpoint failed: {response.status_code}")
+            print(f"❌ Buy endpoint failed: {response.status_code}")
             return False
     except requests.exceptions.RequestException as e:
-        print(f"❌ Visit endpoint error: {e}")
+        print(f"❌ Buy endpoint error: {e}")
         return False
     
     try:
@@ -58,7 +61,8 @@ def test_api_connectivity(host="http://localhost:8080"):
         if response.status_code == 200:
             print("✅ Stats endpoint working")
             data = response.json()
-            print(f"   Total visits: {data.get('total_visits', 'unknown')}")
+            print(f"   Total buys: {data.get('total_buys', 'unknown')}")
+            print(f"   Recent buys (1h): {data.get('n_recent_buys', 'unknown')}")
             print(f"   Server status: {data.get('server_status', 'unknown')}")
         else:
             print(f"❌ Stats endpoint failed: {response.status_code}")
@@ -88,11 +92,29 @@ def test_locust_import():
         import locustfile
         print("✅ locustfile.py can be imported successfully")
         
-        # Check if our main user class exists
-        if hasattr(locustfile, 'WebVisitUser'):
-            print("✅ WebVisitUser class found")
+        # Check if our main user classes exist
+        user_classes_found = []
+        
+        if hasattr(locustfile, 'CustomerUser'):
+            print("✅ CustomerUser class found")
+            user_classes_found.append('CustomerUser')
         else:
-            print("❌ WebVisitUser class not found")
+            print("❌ CustomerUser class not found")
+            
+        if hasattr(locustfile, 'AdminUser'):
+            print("✅ AdminUser class found")
+            user_classes_found.append('AdminUser')
+        else:
+            print("❌ AdminUser class not found")
+            
+        if hasattr(locustfile, 'BurstCustomer'):
+            print("✅ BurstCustomer class found")
+            user_classes_found.append('BurstCustomer')
+        else:
+            print("⚠️  BurstCustomer class not found (optional)")
+            
+        if len(user_classes_found) < 2:
+            print("❌ Critical user classes missing from locustfile.py")
             return False
             
     except ImportError as e:
@@ -115,16 +137,22 @@ def show_usage_examples():
     print("\n2. 🚀 Quick load test (10 users, 2 per second):")
     print("   locust --host=http://localhost:8080 --users 10 --spawn-rate 2 --run-time 60s")
     
-    print("\n3. 📊 Headless mode with specific user class:")
-    print("   locust --host=http://localhost:8080 --users 20 --spawn-rate 5 --run-time 120s --headless TrafficTrackerUser")
+    print("\n3. 📊 Headless mode with mixed traffic:")
+    print("   locust --host=http://localhost:8080 --users 20 --spawn-rate 5 --run-time 120s --headless")
     
-    print("\n4. 🔥 Heavy load test:")
+    print("\n4. 👥 Customer traffic only:")
+    print("   locust -f locustfile.py --host=http://localhost:8080 CustomerUser --users 15 --spawn-rate 3 --run-time 180s --headless")
+    
+    print("\n5. 🔧 Admin monitoring only:")
+    print("   locust -f locustfile.py --host=http://localhost:8080 AdminUser --users 2 --spawn-rate 1 --run-time 120s --headless")
+    
+    print("\n6. 🔥 Heavy load test (realistic e-commerce traffic):")
     print("   locust --host=http://localhost:8080 --users 100 --spawn-rate 10 --run-time 300s --headless")
     
-    print("\n5. 👥 Multiple user types:")
-    print("   locust --host=http://localhost:8080 --users 30 --spawn-rate 3 --run-time 180s --headless")
+    print("\n7. ⚡ Flash sale simulation:")
+    print("   locust -f locustfile.py --host=http://localhost:8080 BurstCustomer --users 50 --spawn-rate 25 --run-time 60s --headless")
     
-    print("\n6. 🧪 Docker testing:")
+    print("\n8. 🧪 Docker testing:")
     print("   # First start the API in Docker:")
     print("   docker compose up -d")
     print("   # Then run Locust:")
@@ -133,8 +161,8 @@ def show_usage_examples():
 
 def main():
     """Main test function."""
-    print("🔥 Traffic Tracker API - Locust Test Validation")
-    print("=" * 50)
+    print("🔥 E-commerce Promotion Buy Tracker API - Locust Test Validation")
+    print("=" * 60)
     
     # Test API connectivity
     if not test_api_connectivity():
@@ -152,20 +180,36 @@ def main():
     # Show usage examples
     show_usage_examples()
     
-    print("\n🎯 Performance Testing Scenarios:")
-    print("• TrafficTrackerUser: Realistic user behavior (5:1 visit:stats ratio)")
-    print("• AdminUser: Monitoring-focused behavior")
-    print("• BurstUser: Sudden traffic spikes")
-    print("• LightLoad: Light testing with longer waits")
-    print("• HeavyLoad: Intensive testing with short waits")
+    print("\n🎯 Performance Testing User Types:")
+    print("• 👥 CustomerUser (weight: 20): Customers making purchases - high volume")
+    print("• 🔧 AdminUser (weight: 1): Admins monitoring campaigns - low volume")
+    print("• ⚡ BurstCustomer (weight: 2): Flash sale burst traffic")
+    print("• 🟢 LightTraffic (weight: 5): Light load configuration")
+    print("• 🔴 HeavyTraffic (weight: 15): Heavy load configuration")
+    
+    print("\n📊 Traffic Distribution (Default Mixed):")
+    print("• ~87% Customer purchases (/buy endpoint)")
+    print("• ~4% Admin monitoring (/stats, /health endpoints)")
+    print("• ~9% Burst traffic (flash sales)")
     
     print("\n📈 Key Metrics to Monitor:")
-    print("• Response times for /visit and /stats endpoints")
+    print("• Response times for /buy, /stats, and /health endpoints")
     print("• Request success rate (should be close to 100%)")
-    print("• API throughput (requests per second)")
+    print("• Purchase throughput (buys per second)")
+    print("• Campaign analytics accuracy")
     print("• Error rate and types")
+    print("• Timestamp extraction from headers")
     
-    print("\n✅ All tests passed! Ready for load testing.")
+    print("\n🛒 E-commerce Scenarios to Test:")
+    print("• Normal shopping traffic: 20-50 concurrent customers")
+    print("• Flash sale events: 100-500 concurrent burst customers")
+    print("• Admin monitoring: 1-3 concurrent admin users")
+    print("• Peak holiday traffic: 200+ concurrent mixed users")
+    print("• Campaign performance tracking: Various timeframes")
+    
+    print("\n✅ All tests passed! Ready for e-commerce promotion load testing.")
+    print("\n🚀 Start load testing:")
+    print("   locust --host=http://localhost:8080")
 
 
 if __name__ == "__main__":

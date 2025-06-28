@@ -1,28 +1,35 @@
 """Pydantic models for API requests and responses."""
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
 
-class VisitRequest(BaseModel):
-    """Model for visit logging request."""
+class BuyRequest(BaseModel):
+    """Model for buy request."""
 
-    user_id: str = Field(..., description="Unique identifier for the user")
-    page_url: str = Field(..., description="URL of the page being visited")
-    user_agent: Optional[str] = Field(None, description="User agent string")
-    ip_address: Optional[str] = Field(None, description="IP address of the visitor")
-    referrer: Optional[str] = Field(None, description="Referrer URL")
+    user_id: int = Field(..., description="Unique identifier for the user")
+    promotion_id: int = Field(..., description="Unique identifier for the promotion")
+    product_id: int = Field(..., description="Unique identifier for the product")
+    product_amount: float = Field(..., description="Amount of the product")
+    
 
+class BuyInformation(BaseModel):
+    """Model for internal buy information storage."""
 
-class VisitResponse(BaseModel):
-    """Model for visit logging response."""
+    user_id: int = Field(..., description="Unique identifier for the user")
+    promotion_id: int = Field(..., description="Unique identifier for the promotion")
+    product_id: int = Field(..., description="Unique identifier for the product")
+    product_amount: float = Field(..., description="Amount of the product")
+    ip_address: str = Field(..., description="Client IP address")
+    timestamp: datetime = Field(..., description="Request generation timestamp")
+
+class BuyResponse(BaseModel):
+    """Model for buy logging response."""
 
     success: bool = Field(..., description="Whether the visit was logged successfully")
-    visit_count: int = Field(..., description="Total number of visits")
-    message: str = Field(..., description="Response message")
-
+    buy_count: int = Field(..., description="Total number of buys")
+    message: str = Field(..., description="Response message for the user")
 
 class StatsRequest(BaseModel):
     """Model for statistics request parameters."""
@@ -40,8 +47,8 @@ class StatsResponse(BaseModel):
 
     uptime_seconds: float = Field(..., description="Server uptime in seconds")
     uptime_formatted: str = Field(..., description="Human-readable uptime")
-    total_visits: int = Field(..., description="Total number of visits logged")
+    total_buys: int = Field(..., description="Total number of buys logged")
     current_time: datetime = Field(..., description="Current server time")
     server_status: str = Field(..., description="Server status")
-    recent_visits: int = Field(..., description="Number of visits in the specified timeframe")
-    timeframe_hours: float = Field(..., description="Timeframe used for recent visits calculation")
+    n_recent_buys: int = Field(..., description="Number of buys in the specified timeframe")
+    timeframe_hours: float = Field(..., description="Timeframe used for recent buys calculation")

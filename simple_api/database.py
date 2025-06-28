@@ -4,7 +4,7 @@ import multiprocessing
 from datetime import datetime
 from typing import Any, Dict, List
 
-from simple_api.models import VisitRequest
+from simple_api.models import BuyInformation
 
 
 class MockedDB:
@@ -20,50 +20,50 @@ class MockedDB:
         self.manager = multiprocessing.Manager()
 
         # Shared list to store visit records
-        self.visits = self.manager.list()
+        self.buys = self.manager.list()
 
         # Shared integer to track total visit count
-        self.visit_count = self.manager.Value("i", 0)  # 'i' for integer
+        self.buy_count = self.manager.Value("i", 0)  # 'i' for integer
 
         # Lock for thread-safe operations
         self.lock = self.manager.Lock()
 
-    def add_page_visit(self, visit_data: VisitRequest) -> int:
+    def add_product_buy(self, buy_data: BuyInformation) -> int:
         """
-        Add a page visit to the database with thread-safe operations.
+        Add a product buy to the database with thread-safe operations.
 
         Args:
-            visit_data: VisitRequest object containing visit information
+            buy_data: BuyInformation object containing buy information
 
         Returns:
-            int: Updated total visit count
+            int: Updated total buy count
         """
         with self.lock:
             # Create visit record with timestamp
-            visit_record = {
-                "user_id": visit_data.user_id,
-                "page_url": visit_data.page_url,
-                "user_agent": visit_data.user_agent,
-                "ip_address": visit_data.ip_address,
-                "referrer": visit_data.referrer,
-                "timestamp": datetime.now().isoformat(),
+            buy_record = {
+                "user_id": buy_data.user_id,
+                "promotion_id": buy_data.promotion_id,
+                "product_id": buy_data.product_id,
+                "product_amount": buy_data.product_amount,
+                "ip_address": buy_data.ip_address,
+                "timestamp": buy_data.timestamp.isoformat(),
             }
 
-            # Add to visits list
-            self.visits.append(visit_record)
+            # Add to buys list
+            self.buys.append(buy_record)
 
             # Increment visit count
-            self.visit_count.value += 1
+            self.buy_count.value += 1
 
-            return self.visit_count.value
+            return self.buy_count.value
 
-    def get_total_visits(self) -> int:
-        """Get the total number of visits."""
-        return self.visit_count.value
+    def get_total_buys(self) -> int:
+        """Get the total number of buys."""
+        return self.buy_count.value
 
-    def get_recent_visits(self, hours: float = 1.0) -> int:
+    def get_recent_buys(self, hours: float = 1.0) -> int:
         """
-        Get the number of visits within the specified number of hours.
+        Get the number of buys within the specified number of hours.
 
         Args:
             hours: Number of hours to look back (default: 1.0)
@@ -75,16 +75,16 @@ class MockedDB:
             current_time = datetime.now()
             recent_count = 0
 
-            for visit in self.visits:
-                visit_time = datetime.fromisoformat(visit["timestamp"])
-                time_diff = current_time - visit_time
+            for buy in self.buys:
+                buy_time = datetime.fromisoformat(buy["timestamp"])
+                time_diff = current_time - buy_time
 
                 if time_diff.total_seconds() <= (hours * 3600):
                     recent_count += 1
 
             return recent_count
 
-    def get_all_visits(self) -> List[Dict[str, Any]]:
-        """Get all visit records (for debugging purposes)."""
+    def get_all_buys(self) -> List[Dict[str, Any]]:
+        """Get all buy records (for debugging purposes)."""
         with self.lock:
-            return list(self.visits)
+            return list(self.buys)
