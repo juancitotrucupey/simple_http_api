@@ -31,7 +31,7 @@ This project uses Poetry for dependency management. Follow these steps to set up
 
 2. Install development dependencies (includes ruff for formatting):
    ```bash
-   poetry install --no-root --with dev
+   poetry install --no-root --extras dev
    ```
 
 ## Development
@@ -479,7 +479,7 @@ Docker configuration is available in the `docker/` directory for containerized d
 
 ```bash
 # Build and run with Docker Compose
-docker-compose -f docker/docker-compose.yml up --build
+docker compose -f docker/docker-compose.yml up --build
 
 # API will be available at http://localhost:8080
 ```
