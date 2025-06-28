@@ -2,6 +2,17 @@
 
 **FastAPI-based system for tracking user purchases during e-commerce promotion campaigns.** This API records customer buy transactions on promotional pages and provides analytics data to measure promotion effectiveness and customer engagement.
 
+## 📋 Technical Report
+
+**[📑 Complete Technical Analysis](technical_report.md)** - Comprehensive technical documentation covering:
+- **Concurrency Strategy**: Thread-safety implementation and scalability considerations
+- **Performance Analysis**: Detailed performance characteristics and bottleneck analysis  
+- **Production Readiness**: Database migration roadmap and scaling architecture
+
+*This report addresses technical evaluation criteria including concurrency handling, performance optimization, and production deployment strategy.*
+
+---
+
 ## 🎯 Purpose
 
 This API serves as a **buy tracking and analytics system** for e-commerce promotional campaigns:
