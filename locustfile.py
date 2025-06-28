@@ -58,18 +58,15 @@ class CustomerUser(HttpUser):
         promotion_id = random.randint(1, 10)   # Limited number of active promotions
         product_id = random.randint(100, 999)  # Product catalog range
         
-        # Realistic purchase amounts for promotional products
-        product_amounts = [
-            9.99, 19.99, 29.99, 39.99, 49.99, 59.99, 69.99, 79.99, 89.99, 99.99,
-            149.99, 199.99, 249.99, 299.99, 399.99, 499.99, 599.99, 799.99, 999.99
-        ]
-        product_amount = random.choice(product_amounts)
+        # Realistic product quantities for promotional purchases
+        product_quantities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 50]
+        product_quantity = random.choice(product_quantities)
         
         purchase_data = {
             "user_id": user_id,
             "promotion_id": promotion_id,
             "product_id": product_id,
-            "product_amount": product_amount
+            "product_quantity": product_quantity
         }
         
         # Add timestamp header for accurate analytics (simulating real client)
@@ -90,7 +87,7 @@ class CustomerUser(HttpUser):
                     if data.get("success"):
                         response.success()  # type: ignore
                         # Optional: Log successful purchase for debugging
-                        # print(f"✅ Purchase: User {user_id}, Product ${product_amount}")
+                        # print(f"✅ Purchase: User {user_id}, Quantity {product_quantity}")
                     else:
                         response.failure(f"Purchase not successful: {data}")  # type: ignore
                 except json.JSONDecodeError:
@@ -109,15 +106,15 @@ class CustomerUser(HttpUser):
         promotion_id = random.randint(1, 5)  # Premium promotions
         product_id = random.randint(800, 999)  # Premium products
         
-        # High-value purchase amounts
-        high_value_amounts = [999.99, 1499.99, 1999.99, 2499.99, 2999.99, 3999.99, 4999.99]
-        product_amount = random.choice(high_value_amounts)
+        # High-quantity bulk purchases
+        high_value_quantities = [25, 30, 40, 50, 75, 100, 150, 200, 250, 300, 500]
+        product_quantity = random.choice(high_value_quantities)
         
         purchase_data = {
             "user_id": user_id,
             "promotion_id": promotion_id,
             "product_id": product_id,
-            "product_amount": product_amount
+            "product_quantity": product_quantity
         }
         
         headers = {
@@ -303,15 +300,15 @@ class BurstCustomer(CustomerUser):
             user_id = random.randint(10000, 99999)  # Flash sale customer range
             product_id = random.randint(100, 200)   # Flash sale products
             
-            # Flash sale pricing
-            flash_prices = [9.99, 14.99, 19.99, 24.99, 29.99, 39.99]
-            product_amount = random.choice(flash_prices)
+            # Flash sale quantities (limited quantities per flash sale)
+            flash_quantities = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15]
+            product_quantity = random.choice(flash_quantities)
             
             purchase_data = {
                 "user_id": user_id,
                 "promotion_id": flash_sale_promotion,
                 "product_id": product_id,
-                "product_amount": product_amount
+                "product_quantity": product_quantity
             }
             
             # Add request start header (simulating load balancer timing)

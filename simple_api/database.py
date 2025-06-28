@@ -44,7 +44,7 @@ class MockedDB:
                 "user_id": buy_data.user_id,
                 "promotion_id": buy_data.promotion_id,
                 "product_id": buy_data.product_id,
-                "product_amount": buy_data.product_amount,
+                "product_quantity": buy_data.product_quantity,
                 "ip_address": buy_data.ip_address,
                 "timestamp": buy_data.timestamp.isoformat(),
             }

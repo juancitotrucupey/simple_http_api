@@ -41,7 +41,7 @@ def test_api_connectivity(host="http://localhost:8080"):
             "user_id": 99999,
             "promotion_id": 1,
             "product_id": 999,
-            "product_amount": 29.99
+            "product_quantity": 3
         }
         response = requests.post(f"{host}/buy", json=test_purchase, timeout=5)
         if response.status_code == 200:
