@@ -533,7 +533,7 @@ docker compose -f docker/docker-compose.yml up --build
 **JavaScript Frontend Integration:**
 ```javascript
 // Log a purchase
-const logPurchase = async (userId, promotionId, productId, amount) => {
+const logPurchase = async (userId, promotionId, productId, quantity) => {
   const response = await fetch('/buy', {
     method: 'POST',
     headers: {
@@ -544,7 +544,7 @@ const logPurchase = async (userId, promotionId, productId, amount) => {
       user_id: userId,
       promotion_id: promotionId, 
       product_id: productId,
-      product_amount: amount
+      product_quantity: quantity
     })
   });
   return response.json();
@@ -562,7 +562,7 @@ const getCampaignStats = async (hours = 24) => {
 import requests
 from datetime import datetime
 
-def log_purchase(user_id, promotion_id, product_id, amount):
+def log_purchase(user_id, promotion_id, product_id, quantity):
     """Log a customer purchase with timestamp"""
     url = "http://localhost:8080/buy"
     headers = {
@@ -573,7 +573,7 @@ def log_purchase(user_id, promotion_id, product_id, amount):
         "user_id": user_id,
         "promotion_id": promotion_id,
         "product_id": product_id, 
-        "product_amount": amount
+        "product_quantity": quantity
     }
     response = requests.post(url, json=data, headers=headers)
     return response.json()
