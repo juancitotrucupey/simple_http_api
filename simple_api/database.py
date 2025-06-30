@@ -53,7 +53,7 @@ class MockedDB:
             self.buys.append(buy_record)
 
             # Increment visit count
-            self.buy_count.value += 1
+            self.buy_count.value += buy_data.product_quantity
 
             return self.buy_count.value
 
